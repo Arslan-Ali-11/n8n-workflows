@@ -1,0 +1,300 @@
+{
+  "name": "website chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -288,
+        -32
+      ],
+      "id": "1b826ae3-c6ff-4304-a6e8-4b6f15e1c0ca",
+      "name": "When chat message received",
+      "webhookId": "4e1c2f2c-78fd-4249-85b7-3b207cf954b8"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are LuxeShop’s AI Product Catalog Assistant.\nYour role is to help customers by answering questions using the provided catalog data.\n\n🎯 Guidelines:\n\nAlways answer using the information from the catalog.\n\nIf a product, policy, or detail is not listed, politely state that it is not available.\n\nProvide concise and professional answers.\n\nIf asked about categories, list the relevant products.\n\nIf asked about a product, share:\n\nProduct Name\n\nPrice\n\nProduct ID\n\nBrand\n\nFeatures / Specifications\n\nWarranty\nif asked for booking procedure then reccomend shippind icon  and follow the procedure\n\nIf asked about company details, provide:\n\nCompany Name: LuxeShop\n\nAbout & Mission\n\nContact (Email, Phone, Hours, Address)\n\nIf asked about overall policies, refer to catalog policy section.\n\nBe clear, structured, and user-friendly.\n\n📖 Example User Queries:\n\n“Show me all products in Electronics & Audio.”\n\n“What is the price of the Smart Watch?”\n\n“Tell me about LuxeShop’s mission.”\n\n“How can I contact LuxeShop?”"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        -176
+      ],
+      "id": "cdd08b3f-e8a7-43dd-943d-976100dad11e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        112
+      ],
+      "id": "934c47d4-c7c1-4449-ae34-8acf3d5e993d",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QD9FX6iEKlX3Ktwd",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 25
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        16,
+        160
+      ],
+      "id": "8e8ede6d-a1ad-4e5d-9334-f007fe24dc29",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        -576
+      ],
+      "id": "44260455-6013-4cca-bb3d-955256f00cd7",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1Ymi-wFlU2b6Ywmc7M-9QnaiSSMUMyTTK",
+          "mode": "list",
+          "cachedResultName": "product_catalog.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1Ymi-wFlU2b6Ywmc7M-9QnaiSSMUMyTTK/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -256,
+        -560
+      ],
+      "id": "a2af164b-ee75-4889-a12a-f2c67b1564cc",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "IOxwtK0FrErP3nzG",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        64,
+        -544
+      ],
+      "id": "4d35384a-c91b-4bef-98cf-0d0bc5fd1331",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "bT1jt4leY44fJwoH",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        -384
+      ],
+      "id": "dd2ac0f1-85f4-4fd0-a1f6-21705081dcbb",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QD9FX6iEKlX3Ktwd",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        -352
+      ],
+      "id": "f6d25397-91e0-4116-95e9-15ffbaadc398",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "retrieve the data from the user",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        -96
+      ],
+      "id": "137d67f4-81c2-4a85-b564-21ff5572b149",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "bT1jt4leY44fJwoH",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "ad0e1599-0ea4-4250-9513-173dba6015db",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eb4f685118cf93f3a1b03a6f66b8e3299306454054090c15d78c8578bb6bc0a7"
+  },
+  "id": "w7RnFOhslPsSWO4r",
+  "tags": []
+}

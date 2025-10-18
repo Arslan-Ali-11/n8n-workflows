@@ -1,0 +1,513 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e6871c89-002f-4e46-a4e1-34d1a51a7b07",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "GNgiVhLKrgMjHEOT",
+          "name": "doctors_clinic"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        224
+      ],
+      "id": "9a63a859-a67b-45a7-b3ed-f0d909edc5cf",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        256
+      ],
+      "id": "cc49f1fd-e206-4f5a-9688-4625b05ede25",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "FsFIRaCPZsLCy0rp",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are CityCare Multispecialty Clinic’s Virtual Assistant – a professional, polite, and helpful medical information assistant.\nYour role is to answer patient queries based strictly on the provided clinic data.\n📌 General Guidelines\n\nAlways maintain a friendly, professional, and empathetic tone.\n\nprovide medical advice, prescriptions, or diagnoses and reccomended our clinic doctors.\n\nIf patients ask for treatment, politely recommend:\n“For proper treatment and medical advice, please consult with our doctors directly.”\n📌 Clinic Information Responses\n\nIf a user asks: “Tell me about your clinic” or “How can I visit/book an appointment?”, provide:\n\nClinic address\n\nReception contact number\n\nConsulting fee\n\nOfficial email address\n\n📌 Doctor Inquiries\n\nIf a patient asks for a doctor outside the available list, respond politely:\n“Currently, our clinic has five available specialists: Brain, Skin, Heart, Child, and Bone doctors. Please let me know which one you’d like more details about.”\n\n📌 Appointment Booking Workflow\n\nWhen a patient requests to book an appointment, collect these details together:\n\nFull Name\n\nDisease/Concern\n\nPhone Number\n\nEmail Address\n\nHome Address\n\nAfter booking, perform the following steps:\n\nGenerate a unique token number for the patient.\n\nSave the patient’s details in the Google Sheet.\n\nSend a confirmation email to the patient.\n\nShare the clinic policies with the patient."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        48
+      ],
+      "id": "81e43bd6-9b37-435a-a53c-5965ca48c6b6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        496,
+        256
+      ],
+      "id": "3fadb4cc-c947-42c1-8111-991d78d96027",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "z1nvlzv6MOofN7Lu",
+          "name": "whatpp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Retrieve answer for query from chat input",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "includeDocumentMetadata": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        624
+      ],
+      "id": "30a7abd9-82f9-44a4-8a2a-b80adc88654c",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "9frFxbSZKNikhfYQ",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        96
+      ],
+      "id": "f39932cc-74eb-4f0e-bc8f-fc7bbe631e37",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "14VsijDKtrxL0cbzh_qn5_fXkvTJPsiVM",
+          "mode": "list",
+          "cachedResultName": "large_doctors_clinic_info.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/14VsijDKtrxL0cbzh_qn5_fXkvTJPsiVM/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -272,
+        96
+      ],
+      "id": "52f4583b-a09e-4251-affc-13b145df1e6a",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "bpIuNEgA2oKzr1W2",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1NG9hENWlCoNXSy84gK4hQWW7L30OtQHihNYvGzlG5h0",
+          "mode": "list",
+          "cachedResultName": "doctor info",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NG9hENWlCoNXSy84gK4hQWW7L30OtQHihNYvGzlG5h0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NG9hENWlCoNXSy84gK4hQWW7L30OtQHihNYvGzlG5h0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "Disease": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Disease', ``, 'string') }}",
+            "Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Number', ``, 'string') }}",
+            "Address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Address', ``, 'string') }}",
+            "patient_email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('patient_email', ``, 'string') }}",
+            "Full name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Full_name', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Fulll_name"
+          ],
+          "schema": [
+            {
+              "id": "Full name",
+              "displayName": "Full name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Disease",
+              "displayName": "Disease",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Number",
+              "displayName": "Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "patient_email",
+              "displayName": "patient_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "token number",
+              "displayName": "token number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        416
+      ],
+      "id": "ba4382ea-b931-489d-8b04-f64240fa1ea4",
+      "name": "Append or update row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gHLXgxxGnvda87Tv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "=Dear Arslan Ali, Thank you for booking your appointment with our Skin Specialist at CityCare Multispecialty Clinic. Here are the details of your appointment: - **Appointment Token Number:** 1 **Location:** CityCare Multispecialty Clinic,  Please arrive 15 minutes prior to your appointment time. If you have any questions or need to reschedule, feel free to contact us. Best Regards, CityCare Multispecialty Clinic",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1088,
+        416
+      ],
+      "id": "0b916aae-e785-42af-a618-18c0c4dcd440",
+      "name": "Send a message in Gmail",
+      "webhookId": "874ccc35-8a76-466a-a218-b9c2765a917c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ovJADh0GbjUfiLo7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        384,
+        48
+      ],
+      "id": "a553d8d7-314b-4da1-9191-60fbe25d3ea9",
+      "name": "WhatsApp Trigger",
+      "webhookId": "7e7baa98-4667-4144-aea6-817a85cc72b9",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "zdsIVQzAJsUXZFLF",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "813028008561006",
+        "recipientPhoneNumber": "+923245653813",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        976,
+        48
+      ],
+      "id": "7fdf5e3f-326b-4af5-b218-81d1e2a0b6b3",
+      "name": "Send message",
+      "webhookId": "a0407555-4836-4003-a169-2c2b244b474e",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "ydZKnICJD5s6kAuo",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.chatInput }}",
+        "contextWindowLength": 25
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        256
+      ],
+      "id": "b7919e61-c4db-47c2-9dea-b87b514c895c",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "5d506210-3301-46df-b4a8-8fa1a4dc0f7a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "19393ee7efe820107ed9982907506b62705c2e5c46b9d95336d46a31d8c0c774"
+  },
+  "id": "NA01a0DDwnK33g2x",
+  "tags": []
+}
